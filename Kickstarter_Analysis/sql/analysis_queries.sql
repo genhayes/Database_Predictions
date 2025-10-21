@@ -1,43 +1,46 @@
 -- Kickstarter Data Analysis SQL Queries
--- Examine database schema and analyze project success rates
+-- Examines database schema and analyzes project success rates
 
--- 1. Get table schema and column information
+-- Note that the load_data.py script should be run first to create and populate the database
+
+
+-- Get table schema and column information
 .schema kickstarter_projects
 
--- 2. Display all column names
+-- Display all column names
 PRAGMA table_info(kickstarter_projects);
 
--- 3. Get basic statistics about the dataset
+-- Get basic statistics about the dataset
 SELECT 
     COUNT(*) as total_projects,
-    COUNT(DISTINCT main_category) as unique_categories,
-    COUNT(DISTINCT country) as unique_countries,
-    MIN(launched) as earliest_launch,
-    MAX(launched) as latest_launch
+    COUNT(DISTINCT "main_category ") as unique_categories,
+    COUNT(DISTINCT "country ") as unique_countries,
+    MIN("launched ") as earliest_launch,
+    MAX("launched ") as latest_launch
 FROM kickstarter_projects;
 
--- 4. Show all unique categories
-SELECT DISTINCT main_category, COUNT(*) as project_count
+-- Show all unique categories
+SELECT DISTINCT "main_category ", COUNT(*) as project_count
 FROM kickstarter_projects
-GROUP BY main_category
+GROUP BY "main_category "
 ORDER BY project_count DESC;
 
--- 5. Analyze success rates by category
+-- Analyze success rates by category
 SELECT 
-    main_category,
+    "main_category ",
     COUNT(*) as total_projects,
-    SUM(CASE WHEN state = 'successful' THEN 1 ELSE 0 END) as successful_projects,
-    SUM(CASE WHEN state = 'failed' THEN 1 ELSE 0 END) as failed_projects,
+    SUM(CASE WHEN "state " = 'successful' THEN 1 ELSE 0 END) as successful_projects,
+    SUM(CASE WHEN "state " = 'failed' THEN 1 ELSE 0 END) as failed_projects,
     ROUND(
-        100.0 * SUM(CASE WHEN state = 'successful' THEN 1 ELSE 0 END) / COUNT(*), 
+        100.0 * SUM(CASE WHEN "state " = 'successful' THEN 1 ELSE 0 END) / COUNT(*), 
         2
     ) as success_rate_percent
 FROM kickstarter_projects
-WHERE state IN ('successful', 'failed')
-GROUP BY main_category
+WHERE "state " IN ('successful', 'failed')
+GROUP BY "main_category "
 ORDER BY success_rate_percent DESC;
 
--- 6. Success rates by funding goal ranges
+-- Success rates by funding goal ranges
 SELECT 
     CASE 
         WHEN goal < 1000 THEN 'Under $1K'
@@ -65,7 +68,7 @@ ORDER BY
         ELSE 6
     END;
 
--- 7. Most successful categories with high project counts
+-- Most successful categories with high project counts
 SELECT 
     main_category,
     COUNT(*) as total_projects,
